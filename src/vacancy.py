@@ -5,9 +5,10 @@ from src.api_manager import SuperJobAPI, HeadHunterAPI
 class Vacancy:
     vacancies_list = []
 
-    def __init__(self, name, area, company, url, salary_min, salary_max,
-                 currency, description, responsibility, platform):
+    def __init__(self, name, vacancy_id, area, company, url, salary_min,
+                 salary_max, currency, description, responsibility, platform):
         self.name = name
+        self.vacancy_id = vacancy_id
         self.area = area
         self.company = company
         self.url = url
@@ -25,14 +26,25 @@ class Vacancy:
         return self.__avr_salary
 
     def __repr__(self):
-        return f'{self.__class__.__name__} ' \
-               f'({self.name}, {self.area}, {self.company}, ' \
-               f'{self.avr_salary}, {self.url})\n'
+        return f'{self.__class__.__name__} ({self.platform}, {self.name}, ' \
+               f'{self.vacancy_id}, {self.area}, {self.company}, {self.avr_salary}, {self.url})\n'
 
-    def __lt__(self, other):
-        if isinstance(other, Vacancy):
-            return int(self.avr_salary) < int(other.avr_salary)
-        raise AttributeError(f'{other.avr_salary} не является экземпляром класса Vacancy')
+    def __str__(self):
+        return f'{"_" * 80}\n' \
+               f'Платформа: {self.platform}\n' \
+               f'vacancy_id: {self.vacancy_id}\n' \
+               f'Вакансия: {self.name}\n' \
+               f'Ссылка: {self.url}\n' \
+               f'Населенный пункт: {self.area}\n' \
+               f'Компания: {self.company}\n' \
+               f'Зарплата: {self.avr_salary} {self.currency}\n' \
+               f'Описание:\n{self.description}\n' \
+               f'Обязанности:\n{self.responsibility}'
+
+    def __ge__(self, other):
+        if isinstance(other, int):
+            return int(self.avr_salary) >= other
+        raise AttributeError(f'{other} не является экземпляром класса Integer')
 
     @staticmethod
     def calc_salary(salary_min: int, salary_max: int) -> int:
@@ -51,14 +63,14 @@ class Vacancy:
             return re.compile(r'<[^>]+>').sub('', value)
 
 
-class SJVac(Vacancy):
+class SJVacancy(Vacancy):
 
     @classmethod
-    def initialize_vac(cls, search_query: str) -> list:
-
-        for item in SuperJobAPI().get_vacancies(search_query):
+    def initialize_vac(cls, search_query: str) -> None:
+        for item in SuperJobAPI().get_api(search_query):
             cls(
                 item['profession'],
+                item['id'],
                 item['town']['title'],
                 item['firm_name'],
                 item['link'],
@@ -66,18 +78,19 @@ class SJVac(Vacancy):
                 item['payment_to'],
                 item['currency'],
                 item['candidat'],
-                item['work'] if item['work'] is not None else 'Данные отсутствуют или находятся в другом разделе.',
+                item['work'] if item['work'] is not None else 'Данные отсутствуют или находятся в другом описании.',
                 'SuberJob'  # platform
             )
 
 
-class HHVac(Vacancy):
+class HHVacancy(Vacancy):
 
     @classmethod
     def initialize_vac(cls, search_query: str) -> None:
-        for item in HeadHunterAPI().get_vacancies(search_query):
+        for item in HeadHunterAPI().get_api(search_query):
             cls(
                 item['name'],
+                item['id'],
                 item['area']['name'],
                 item['employer']['name'],
                 item['alternate_url'],
