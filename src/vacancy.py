@@ -55,9 +55,9 @@ class SJVac(Vacancy):
 
     @classmethod
     def initialize_vac(cls, search_query: str) -> list:
-        vacancies_data = []
+
         for item in SuperJobAPI().get_vacancies(search_query):
-            vacancy = cls(
+            cls(
                 item['profession'],
                 item['town']['title'],
                 item['firm_name'],
@@ -69,17 +69,14 @@ class SJVac(Vacancy):
                 item['work'] if item['work'] is not None else 'Данные отсутствуют или находятся в другом разделе.',
                 'SuberJob'  # platform
             )
-            vacancies_data.append(vacancy)
-        return vacancies_data
 
 
 class HHVac(Vacancy):
 
     @classmethod
-    def initialize_vac(cls, search_query: str) -> list:
-        vacancies_data = []
+    def initialize_vac(cls, search_query: str) -> None:
         for item in HeadHunterAPI().get_vacancies(search_query):
-            vacancy = cls(
+            cls(
                 item['name'],
                 item['area']['name'],
                 item['employer']['name'],
@@ -91,5 +88,3 @@ class HHVac(Vacancy):
                 item['snippet']['responsibility'],
                 'HeadHunter'  # platform
             )
-            vacancies_data.append(vacancy)
-        return vacancies_data
