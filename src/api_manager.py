@@ -42,6 +42,7 @@ class SuperJobAPI(API):
             params = {'keyword': search_query,
                       'page': page_count,
                       'count': 100,
+                      'no_agreement': 1,
                       'date_published_from': unix_date}
             response = requests.get('https://api.superjob.ru/2.0/vacancies', headers=headers, params=params)
             if response.ok:

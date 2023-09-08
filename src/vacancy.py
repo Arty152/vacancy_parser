@@ -42,9 +42,13 @@ class Vacancy:
                f'Обязанности:\n{self.responsibility}'
 
     def __ge__(self, other):
-        if isinstance(other, int):
-            return int(self.avr_salary) >= other
-        raise AttributeError(f'{other} не является экземпляром класса Integer')
+        # проверка реализована в main
+        return int(self.avr_salary) >= other
+
+    def __lt__(self, other):
+        if isinstance(other, Vacancy):
+            return int(self.avr_salary) < int(other.avr_salary)
+        raise AttributeError(f'сравнение возможно только объектов класса Vacancy')
 
     @staticmethod
     def calc_salary(salary_min: int, salary_max: int) -> int:
