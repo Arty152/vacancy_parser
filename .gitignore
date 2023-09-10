@@ -160,3 +160,6 @@ cython_debug/
 .idea/
 /vacancies.json
 /filtered_vacancies.json
+/filtered_vacancies_by_salary.json
+/sorted_vacancies_by_salary.json
+/vacancies_by_keywords.json

@@ -52,10 +52,13 @@ class JSONSaver(Saver):
     def del_vacancy(self, filename, id_vacancy) -> None:
         with open(filename, 'r', encoding='utf-8') as f:
             file_data = json.load(f)
-            for data in file_data:
-                if id_vacancy in data.values():
-                    file_data.remove(data)
+        vacancy_deleted = False
+        for data in file_data:
+            if id_vacancy in data.values():
+                file_data.remove(data)
+                print(f'Вакансия с ID {id_vacancy} успешно удалена!')
+                vacancy_deleted = True
+        if not vacancy_deleted:
+            print(f'Вакансии с ID {id_vacancy} не существует')
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(file_data, f, indent=2, ensure_ascii=False)
-
-
